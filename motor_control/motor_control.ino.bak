@@ -1,0 +1,83 @@
+#define ENCODER_USE_INTERRUPTS
+#define ENCODER_OPTIMIZE_INTERRUPTS
+
+#include <Encoder.h>
+
+#include <PID_v1.h>
+
+// Motor driver pins
+const int motorPin1 = 10;
+const int motorPin2 = 11;
+const int pwmPin = 9; // PWM pin for speed control
+
+// Encoder pins
+const int encoderPinA = 4;
+const int encoderPinB = 5;
+
+//const int encoderPinA = 2;
+//const int encoderPinB = 3;
+
+
+// Setpoint and PID parameters
+double setpoint = -10;  // Desired position
+double currentPosition = 0;  // Encoder position
+double motorOutput = 0;  // PWM output to motor
+
+
+
+// Encoder object
+Encoder myEncoder(encoderPinA, encoderPinB);
+
+void setup() {
+  // Initialize motor pins
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
+  pinMode(pwmPin, OUTPUT);
+
+  Serial.begin(9600);  // Debugging
+}
+
+int counter = 0;
+void loop() {
+  // Read the current encoder position
+  currentPosition = myEncoder.read();
+  counter += 1;
+  if (counter%100000 == 0){
+    Serial.println(counter);
+    Serial.println(currentPosition);		
+  } 
+
+//  // Control motor based on PID output
+//  if (motorOutput > 0) {
+//    digitalWrite(motorPin1, HIGH);
+//    digitalWrite(motorPin2, LOW);
+//    analogWrite(pwmPin, motorOutput);
+//  } else if (motorOutput < 0) {
+//    digitalWrite(motorPin1, LOW);
+//    digitalWrite(motorPin2, HIGH);
+//    analogWrite(pwmPin, -motorOutput);
+//  } else {
+//    // Stop motor if output is zero
+//    digitalWrite(motorPin1, LOW);
+//    digitalWrite(motorPin2, LOW);
+//  }
+
+//  int val1 = 0;
+//  int val2 = 0;
+//
+//  val1 = digitalRead(encoderPinA);
+//  val2 = digitalRead(encoderPinB);	
+//
+//  // Debugging output
+//  Serial.print("Setpoint: ");
+//  Serial.println(setpoint);
+//  Serial.print(" Current Position: ");
+//  Serial.println(currentPosition);
+//  Serial.println(val1);
+//  Serial.println(val2);	
+//  Serial.println(" ---------------------- ");
+
+//  delay(1000);
+  // Add code to change the setpoint based on desired position
+  // For example, you could read a new setpoint from Serial or a potentiometer.
+}
