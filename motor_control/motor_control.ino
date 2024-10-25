@@ -12,7 +12,7 @@ const int encoderPinA = 3;
 const int encoderPinB = 4;
 
 // Setpoint and PID parameters
-double setpoint = -56000;  // Desired position
+double setpoint = -5600;  // Desired position
 double currentPosition = 0;  // Encoder position
 double motorOutput = 0;  // PWM output to motor
 
@@ -24,6 +24,7 @@ PID myPID(&currentPosition, &motorOutput, &setpoint, Kp, Ki, Kd, DIRECT);
 Encoder myEncoder(encoderPinA, encoderPinB);
   unsigned long last_time = millis();
   unsigned long last_time_speed = millis();
+  unsigned long last_time_print = millis();	
 
 void setup() {
   // Initialize motor pins
@@ -40,14 +41,13 @@ void setup() {
   Serial.begin(9600);  // Debugging
 }
 
-int counter = 0;
 int wait_time = 10;
 int wait_time_speed = 100;
+int wait_time_print = 10000;
 double floor_speed = 5.;
 double last_pos = 0.;
 double last_output;
 void loop() {
-  counter += 1;
   // Read the current encoder position
   currentPosition = myEncoder.read();
 
@@ -62,9 +62,20 @@ void loop() {
     if(last_output*motorOutput < 0.){
       floor_speed *= 0.5;
     }
-
     last_pos = currentPosition;
     last_output = motorOutput;
+  }
+
+  if( (time - last_time_print) > wait_time_print){
+    last_time_print = time;
+    //  Debugging output
+    Serial.print("Setpoint: ");
+    Serial.print(setpoint);
+    Serial.print(" Current Position: ");
+    Serial.print(currentPosition);
+    Serial.print(" Motor Output: ");
+    Serial.println(motorOutput);
+    Serial.println("------------");
 }  
 
   if(time - last_time > wait_time){
@@ -93,17 +104,6 @@ void loop() {
     }
 }
 
-  if(counter%200000 == 0){
-    //wait_time += 10;
-    //  Debugging output
-    Serial.print("Setpoint: ");
-    Serial.print(setpoint);
-    Serial.print(" Current Position: ");
-    Serial.print(currentPosition);
-    Serial.print(" Motor Output: ");
-    Serial.println(motorOutput);
-    Serial.println("------------");
-}
 
   // Add code to change the setpoint based on desired position
   // For example, you could read a new setpoint from Serial or a potentiometer.
