@@ -1,3 +1,5 @@
+#define ENCODER_USE_INTERRUPTS
+
 #include <Encoder.h>
 
 #include <PID_v1.h>
@@ -12,7 +14,7 @@ const int encoderPinA = 3;
 const int encoderPinB = 4;
 
 // Setpoint and PID parameters
-double setpoint = -5600;  // Desired position
+double setpoint = -56000;  // Desired position
 double currentPosition = 0;  // Encoder position
 double last_pos = 0;
 
@@ -42,7 +44,7 @@ void setup() {
 
 int wait_time = 1;
 int wait_time_print = 1000;
-int wait_time_home = 5000;
+int wait_time_home = 1000;
 double speed = 20.;
 double last_output;
 int nHome = 0;
@@ -50,6 +52,7 @@ int nSame = 0;
 bool flip = false;
 int counter = 0;
 int floor_speed = 2;
+int nRun = 0;
 
 void loop() {
   // Read the current encoder position
@@ -58,24 +61,24 @@ void loop() {
   unsigned long time = millis();
   counter++;
 
-  if( (time - last_time_print) > wait_time_print){
-    last_time_print = time;
-
-    //  Debugging output
-    Serial.print("Setpoint: ");
-    Serial.println(setpoint);
-    Serial.print(" Current Position: ");
-    Serial.println(currentPosition);
-    Serial.print(" Counter: ");
-    Serial.println(counter);
-    Serial.print(" nHome: ");
-    Serial.println(nHome);
-    Serial.print(" Speed: ");
-    Serial.println(speed);
-    Serial.print(" nSame: ");
-    Serial.println(nSame);
-    Serial.println("------------");
-  }  
+//  if( (time - last_time_print) > wait_time_print){
+//    last_time_print = time;
+//
+//    //  Debugging output
+//    Serial.print("Setpoint: ");
+//    Serial.println(setpoint);
+//    Serial.print(" Current Position: ");
+//    Serial.println(currentPosition);
+//    Serial.print(" Counter: ");
+//    Serial.println(counter);
+//    Serial.print(" nHome: ");
+//    Serial.println(nHome);
+//    Serial.print(" Speed: ");
+//    Serial.println(speed);
+//    Serial.print(" nSame: ");
+//    Serial.println(nSame);
+//    Serial.println("------------");
+//  }  
 
   if(nHome < 500){
     if( (time - last_time > wait_time)  ){
@@ -108,7 +111,7 @@ void loop() {
  	if(speed < floor_speed){
 	  speed = floor_speed;
         } 
-        wait_time = 1000;
+        wait_time = 100;
       }
       else if(currentPosition == setpoint){
         nHome++;
@@ -140,6 +143,9 @@ void loop() {
   } //end if(nHome < 500)
   else if( (time - last_time_home) > wait_time_home){
     reset();
+    nRun++;
+    Serial.print("nRun: ");
+    Serial.println(nRun);
   }
   // Add code to change the setpoint based on desired position
   // For example, you could read a new setpoint from Serial or a potentiometer.
