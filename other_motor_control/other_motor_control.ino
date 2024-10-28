@@ -45,7 +45,8 @@ void setup() {
 int wait_time = 1;
 int wait_time_print = 1000;
 int wait_time_home = 1000;
-double speed = 20.;
+double base_speed = 20.;
+int speed = base_speed;
 double last_output;
 int nHome = 0;
 int nSame = 0;
@@ -63,21 +64,6 @@ void loop() {
 
 //  if( (time - last_time_print) > wait_time_print){
 //    last_time_print = time;
-//
-//    //  Debugging output
-//    Serial.print("Setpoint: ");
-//    Serial.println(setpoint);
-//    Serial.print(" Current Position: ");
-//    Serial.println(currentPosition);
-//    Serial.print(" Counter: ");
-//    Serial.println(counter);
-//    Serial.print(" nHome: ");
-//    Serial.println(nHome);
-//    Serial.print(" Speed: ");
-//    Serial.println(speed);
-//    Serial.print(" nSame: ");
-//    Serial.println(nSame);
-//    Serial.println("------------");
 //  }  
 
   if(nHome < 500){
@@ -107,7 +93,7 @@ void loop() {
   	forward = !forward;
   	nHome = 0;
   	flip = true;
-  	speed /= 1.1;
+  	speed /= 1.03;
  	if(speed < floor_speed){
 	  speed = floor_speed;
         } 
@@ -155,5 +141,24 @@ void reset() {
   last_time_home = 0;
   myEncoder.write(0);
   nHome = 0;
-  speed = 20;
+  speed = base_speed;
+  setpoint *= -1;
+}
+
+void print() {
+  //  Debugging output
+  Serial.print("Setpoint: ");
+  Serial.println(setpoint);
+  Serial.print(" Current Position: ");
+  Serial.println(currentPosition);
+  Serial.print(" Counter: ");
+  Serial.println(counter);
+  Serial.print(" nHome: ");
+  Serial.println(nHome);
+  Serial.print(" Speed: ");
+  Serial.println(speed);
+  Serial.print(" nSame: ");
+  Serial.println(nSame);
+  Serial.println("------------");
+
 }
