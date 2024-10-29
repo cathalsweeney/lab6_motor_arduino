@@ -5,12 +5,12 @@
 #include <PID_v1.h>
 
 // Motor driver pins
-//const int motorPin1 = 8;
-//const int motorPin2 = 10;
-//const int pwmPin = 9; // PWM pin for speed control
-//// Encoder pins
-//const int encoderPinA = 3;
-//const int encoderPinB = 4;
+const int motorPin1 = 8;
+const int motorPin2 = 10;
+const int pwmPin = 9; // PWM pin for speed control
+// Encoder pins
+const int encoderPinA = 3;
+const int encoderPinB = 4;
 
 
 
