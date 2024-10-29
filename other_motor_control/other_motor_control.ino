@@ -45,7 +45,7 @@ void setup() {
 int wait_time = 1;
 int wait_time_print = 1000;
 int wait_time_home = 1000;
-double base_speed = 20.;
+double base_speed = 30.;
 int speed = base_speed;
 double last_output;
 int nHome = 0;
