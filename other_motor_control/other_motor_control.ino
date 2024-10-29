@@ -46,13 +46,13 @@ int wait_time = 1;
 int wait_time_print = 1000;
 int wait_time_home = 1000;
 double base_speed = 30.;
-int speed = base_speed;
+double speed = base_speed;
 double last_output;
 int nHome = 0;
 int nSame = 0;
 bool flip = false;
 int counter = 0;
-int floor_speed = 2;
+double floor_speed = 2;
 int nRun = 0;
 
 void loop() {
@@ -64,6 +64,7 @@ void loop() {
 
 //  if( (time - last_time_print) > wait_time_print){
 //    last_time_print = time;
+//    print();
 //  }  
 
   if(nHome < 500){
@@ -88,7 +89,10 @@ void loop() {
 
 
       flip = false;
-      if( ( (currentPosition < setpoint) && !forward) ||
+      if(currentPosition == setpoint){
+        nHome++;
+      }
+     else if( ( (currentPosition < setpoint) && !forward) ||
           ( (currentPosition > setpoint) && forward) ){
   	forward = !forward;
   	nHome = 0;
@@ -98,9 +102,6 @@ void loop() {
 	  speed = floor_speed;
         } 
         wait_time = 100;
-      }
-      else if(currentPosition == setpoint){
-        nHome++;
       }
       else{
         nHome = 0;
@@ -146,6 +147,8 @@ void reset() {
 }
 
 void print() {
+  // Warning: do not print out too often, it will
+  // degrade performance of encoder. Every 1s is too often!
   //  Debugging output
   Serial.print("Setpoint: ");
   Serial.println(setpoint);
@@ -159,6 +162,8 @@ void print() {
   Serial.println(speed);
   Serial.print(" nSame: ");
   Serial.println(nSame);
+  Serial.print(" Forward: ");
+  Serial.println(forward);
   Serial.println("------------");
 
 }
