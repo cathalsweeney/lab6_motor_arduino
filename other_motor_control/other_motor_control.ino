@@ -5,13 +5,24 @@
 #include <PID_v1.h>
 
 // Motor driver pins
-const int motorPin1 = 11;
-const int motorPin2 = 10;
-const int pwmPin = 9; // PWM pin for speed control
+//const int motorPin1 = 8;
+//const int motorPin2 = 10;
+//const int pwmPin = 9; // PWM pin for speed control
+//// Encoder pins
+//const int encoderPinA = 3;
+//const int encoderPinB = 4;
 
-// Encoder pins
-const int encoderPinA = 3;
-const int encoderPinB = 4;
+
+
+//const int motorPin1 = 13;
+//const int motorPin2 = 12;
+//const int pwmPin = 11; // PWM pin for speed control
+//// Encoder pins
+//const int encoderPinA = 5;
+//const int encoderPinB = 6;
+
+
+
 
 // Setpoint and PID parameters
 double setpoint = -56000;  // Desired position
