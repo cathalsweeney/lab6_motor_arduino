@@ -5,8 +5,10 @@
 
 
 // ---- All the parameters a user might want to change are in this block ---- 
-bool debug = false;
-double setpoint = -56000;  // Desired position
+bool move_leftright = true; // if false we will move up/down
+double setpoint = 5600; // Desired position.
+                          // (+ve) = towards us / up
+                          // (-ve) = towards wall / down
 int wait_time_base = 1; // Wait time in ms before we try update the motor
 int wait_time_flip = 100; // Wait time in ms before we try update the motor after overshooting
 int wait_time_print = 1000; // Wait time in ms before printing again
@@ -14,6 +16,7 @@ int wait_time_home = 1000; // Once we reach our destination, how long do we wait
 double base_speed = 30.; // default motor speed
 double floor_speed = 2.; // minimum speed of motor
 int home_limit = 500; // if we have been at the destination for this many checks, we are done
+bool debug = false; // should be false for normal operation, otherwise operation will be degraded
 // --------------------------------------------------------------------------
 
 int wait_time = wait_time_base;
@@ -29,19 +32,13 @@ int nRun = 0; // how many times have we reset and started again
 int counter = 0; // number of times loop() has executed. just for debugging
 
 
-// Which pin you use for what matters, don't change without doing some research
-
-const int motorPin1 = 8;
-const int motorPin2 = 10;
-const int pwmPin = 9; 
-const int encoderPinA = 3;
-const int encoderPinB = 4;
-
-//const int motorPin1 = 13;
-//const int motorPin2 = 12;
-//const int pwmPin = 11; 
-//const int encoderPinA = 5;
-//const int encoderPinB = 6;
+// Which pin you use for what matters, don't change without doing some research.
+// Intialise with pins for left/right movement
+int motorPin1 = 8;
+int motorPin2 = 10;
+int pwmPin = 9; 
+int encoderPinA = 3;
+int encoderPinB = 4;
 
 
 // Initialise all these times to current time as placeholder
@@ -49,10 +46,18 @@ unsigned long last_time = millis(); // timestamp of time we most recently checke
 unsigned long last_time_home = millis(); // timestamp when we reached our destination ("home") 
 unsigned long last_time_print = millis(); // timestamp when we last printed out values. Warning - printing degrades encoder performance, only do it for debugging	
 
-// Encoder object
-Encoder myEncoder(encoderPinA, encoderPinB); // This guy will keep track of the motor position
-
 void setup() {
+
+  // switch to pins for moving up/down
+  if(!move_leftright){
+    motorPin1 = 13;
+    motorPin2 = 12;
+    pwmPin = 11; 
+    encoderPinA = 5;
+    encoderPinB = 6;
+  }
+
+
   // Initialize motor pins
   pinMode(motorPin1, OUTPUT);
   pinMode(motorPin2, OUTPUT);
@@ -65,8 +70,18 @@ void setup() {
   last_pos = currentPosition;
 
   Serial.begin(9600);  // for printouts
-
+  if(debug){
+    Serial.println("********************************");
+    Serial.println("******    WARNING!!!!    *******");
+    Serial.println("********************************");
+    Serial.println("Debug mode will severerely degrade encoder performance");
+  }
+  
 }
+
+// Encoder object
+Encoder myEncoder(encoderPinA, encoderPinB); // This guy will keep track of the motor position
+
 
 void loop() {
   // Read the current encoder position
@@ -110,10 +125,14 @@ void loop() {
   	nHome = 0;
   	flip = true;
   	speed /= 1.03; 
- 	if(speed < floor_speed){
-	  speed = floor_speed;
-        } 
         wait_time = wait_time_flip; // temporarily increase wait time, so the motor can finish drifting
+      }
+
+      if(speed < floor_speed){
+	speed = floor_speed;
+      } 
+      else if(speed > base_speed){
+	speed = base_speed;
       }
       
       if(flip){ // we have just overshot, let's stop moving temporarily
@@ -157,6 +176,11 @@ void print() {
   // Warning: do not print out too often, it will
   // degrade performance of encoder. Every 1s is too often!
   //  Debugging output
+  Serial.println("********************************");
+  Serial.println("******    WARNING!!!!    *******");
+  Serial.println("********************************");
+  Serial.println("Debug mode will severerely degrade encoder performance");
+  Serial.println("");
   Serial.print("Setpoint: ");
   Serial.println(setpoint);
   Serial.print(" Current Position: ");
