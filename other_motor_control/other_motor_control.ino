@@ -6,7 +6,7 @@
 
 // ---- All the parameters a user might want to change are in this block ---- 
 bool move_leftright = true; // if false we will move up/down
-double setpoint = 5600; // Desired position.
+double setpoint = -56000; // Desired position.
                           // (+ve) = towards us / up
                           // (-ve) = towards wall / down
 int wait_time_base = 1; // Wait time in ms before we try update the motor
@@ -34,11 +34,11 @@ int counter = 0; // number of times loop() has executed. just for debugging
 
 // Which pin you use for what matters, don't change without doing some research.
 // Intialise with pins for left/right movement
-int motorPin1 = 8;
-int motorPin2 = 10;
-int pwmPin = 9; 
-int encoderPinA = 3;
-int encoderPinB = 4;
+int motorPin1 = 13;
+int motorPin2 = 12;
+int pwmPin = 11; 
+int encoderPinA = 6;
+int encoderPinB = 7;
 
 
 // Initialise all these times to current time as placeholder
@@ -46,17 +46,20 @@ unsigned long last_time = millis(); // timestamp of time we most recently checke
 unsigned long last_time_home = millis(); // timestamp when we reached our destination ("home") 
 unsigned long last_time_print = millis(); // timestamp when we last printed out values. Warning - printing degrades encoder performance, only do it for debugging	
 
+Encoder myEncoder; // This guy will keep track of the motor position
+
 void setup() {
 
   // switch to pins for moving up/down
   if(!move_leftright){
-    motorPin1 = 13;
-    motorPin2 = 12;
-    pwmPin = 11; 
-    encoderPinA = 5;
-    encoderPinB = 6;
+    motorPin1 = 8;
+    motorPin2 = 10;
+    pwmPin = 9; 
+    encoderPinA = 3;
+    encoderPinB = 4;
   }
 
+  myEncoder.begin(encoderPinA, encoderPinB);
 
   // Initialize motor pins
   pinMode(motorPin1, OUTPUT);
@@ -78,10 +81,6 @@ void setup() {
   }
   
 }
-
-// Encoder object
-Encoder myEncoder(encoderPinA, encoderPinB); // This guy will keep track of the motor position
-
 
 void loop() {
   // Read the current encoder position
