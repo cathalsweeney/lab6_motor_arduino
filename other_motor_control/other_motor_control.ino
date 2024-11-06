@@ -5,10 +5,10 @@
 
 
 // ---- All the parameters a user might want to change are in this block ---- 
-bool move_leftright = true; // if false we will move up/down
-double setpoint = -56000; // Desired position.
-                          // (+ve) = towards us / up
-                          // (-ve) = towards wall / down
+bool move_leftright = false; // if false we will move up/down
+double setpoint = 56000; // Desired position.
+                          // (+ve) = towards wall / up
+                          // (-ve) = towards us / down
 int wait_time_base = 1; // Wait time in ms before we try update the motor
 int wait_time_flip = 100; // Wait time in ms before we try update the motor after overshooting
 int wait_time_print = 1000; // Wait time in ms before printing again
@@ -34,8 +34,8 @@ int counter = 0; // number of times loop() has executed. just for debugging
 
 // Which pin you use for what matters, don't change without doing some research.
 // Intialise with pins for left/right movement
-int motorPin1 = 13;
-int motorPin2 = 12;
+int motorPin1 = 12;
+int motorPin2 = 13;
 int pwmPin = 11; 
 int encoderPinA = 6;
 int encoderPinB = 7;
@@ -143,12 +143,12 @@ void loop() {
         digitalWrite(motorPin2, LOW);
         last_time_home = time;
       }
-      else if (forward) {
+      else if (!forward) {
         digitalWrite(motorPin1, HIGH);
         digitalWrite(motorPin2, LOW);
         analogWrite(pwmPin, speed);
       }
-      else if (!forward) {
+      else if (forward) {
         digitalWrite(motorPin1, LOW);
         digitalWrite(motorPin2, HIGH);
         analogWrite(pwmPin, speed);
@@ -157,9 +157,6 @@ void loop() {
   } //end if(nHome < 500)
   else if( (time - last_time_home) > wait_time_home){ // after some amount of time, start again. Useful if you want to move the motor back and forward a bunch
     reset();
-    nRun++;
-    Serial.print("nRun: ");
-    Serial.println(nRun);
   }
 }
 
@@ -169,6 +166,9 @@ void reset() {
   nHome = 0;
   speed = base_speed;
   setpoint *= -1; // reverse the direction
+  nRun++;
+  Serial.print("nRun: ");
+  Serial.println(nRun);
 }
 
 void print() {
