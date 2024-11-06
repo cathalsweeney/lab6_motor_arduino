@@ -155,20 +155,26 @@ void loop() {
       } 
     }  // end if( (time - last_time > wait_time) )
   } //end if(nHome < 500)
-  else if( (time - last_time_home) > wait_time_home){ // after some amount of time, start again. Useful if you want to move the motor back and forward a bunch
+  else if( (time - last_time_home) > wait_time_home){ // after some amount of time, execute reset function. Useful if you want to move the motor back and forward a bunch. Or maybe you want to stop the motor now
     reset();
   }
 }
 
 void reset() {
-  last_time_home = 0;
-  myEncoder.write(0); // reset the current position to zero
-  nHome = 0;
-  speed = base_speed;
-  setpoint *= -1; // reverse the direction
-  nRun++;
-  Serial.print("nRun: ");
-  Serial.println(nRun);
+// --- This block moves motor back and forth ---
+//  last_time_home = 0;
+//  myEncoder.write(0); // reset the current position to zero
+//  nHome = 0;
+//  speed = base_speed;
+//  setpoint *= -1; // reverse the direction
+//  nRun++;
+//  Serial.print("nRun: ");
+//  Serial.println(nRun);
+// ----------------------------------------------
+
+  while(true){
+    // do nothing. we are finished
+  }
 }
 
 void print() {
