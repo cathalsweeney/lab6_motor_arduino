@@ -5,7 +5,7 @@
 
 
 // ---- All the parameters a user might want to change are in this block ---- 
-bool move_leftright = false; // if false we will move up/down
+bool move_leftright = true; // if false we will move up/down
 double setpoint = 56000; // Desired position.
                           // (+ve) = towards wall / up
                           // (-ve) = towards us / down
@@ -49,7 +49,6 @@ unsigned long last_time_print = millis(); // timestamp when we last printed out 
 Encoder myEncoder; // This guy will keep track of the motor position
 
 void setup() {
-
   // switch to pins for moving up/down
   if(!move_leftright){
     motorPin1 = 8;
@@ -73,6 +72,8 @@ void setup() {
   last_pos = currentPosition;
 
   Serial.begin(9600);  // for printouts
+  delay(1000); // wait 1s so the serial is set up before we print
+  Serial.println("not done");
   if(debug){
     Serial.println("********************************");
     Serial.println("******    WARNING!!!!    *******");
@@ -172,6 +173,7 @@ void reset() {
 //  Serial.println(nRun);
 // ----------------------------------------------
 
+  Serial.println("done");
   while(true){
     // do nothing. we are finished
   }
